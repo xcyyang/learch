@@ -34,4 +34,5 @@ do
     cd obj-gcov-${prog}
     ../configure FORCE_UNSAFE_CONFIGURE=1 --disable-nls CFLAGS="-g -O0 -fprofile-arcs -ftest-coverage"
     make -j${NUM_MAKE_CORES}
+    cd ..
 done
