@@ -3,7 +3,7 @@ import subprocess
 
 def replay(prog, replay_script, ktest):
     replay_args = (replay_script, prog, ktest)
-    popen = subprocess.Popen(replay_args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+    popen = subprocess.Popen(replay_args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         popen.wait(timeout=30)
     except:
