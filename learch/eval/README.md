@@ -1,3 +1,22 @@
+## Test Script
+1. Usage: `./test_coreutils.sh [program_list.txt] [output directory] [strategy_list.txt] [max time]`
+2. Example:
+- program_list.txt
+  - b2sum
+  - base64
+- strategy_list.txt
+  - random_path
+  - feedforward train/trained/feedforward_0.pt
+  - nurs:depth
+- output directory
+  - ~/test
+- max time (second)
+  - 60
+  - 1800
+- `./test_coreutils.sh ${SOURCE_DIR}/benchmarks/coreutils_test.txt ~/test strategy_list.txt 60`
+3. Show Result
+- python3 show_results.py --prog_list ${SOURCE_DIR}/benchmarks/coreutils_test.txt --cov_dir ~/test
+       
 Using Learch to test new programs
 =============================================================================================================
 
