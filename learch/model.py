@@ -393,10 +393,17 @@ def predict(x, hidden):
         hidden_new = hidden_new.view(hidden.size(1), hidden.size(2)).tolist()
         return res, hidden_new
     elif _model_type == 'ridge':
-        if x[:,7] > 7.5:
-            return [0.0], None
-        else:
-            return _model.predict(x[:, (0,2,6,8,10)]).tolist(), None
+        def reduce_rows(rows):
+            if rows[7] > 7.5:
+                return 0
+            else:
+                return _model.predict(rows[[0, 2, 6, 8, 10]])[0]
+        return np.apply_along_axis(reduce_rows, 1, x).tolist(), None
+        #
+        # if x[:,7] > 7.5:
+        #     return [0.0], None
+        # else:
+        #     return _model.predict(x[:, (0,2,6,8,10)]).tolist(), None
 
 def sample(x):
     prob = F.softmax(torch.FloatTensor(x), dim=0).tolist()
