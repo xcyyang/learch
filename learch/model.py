@@ -11,7 +11,7 @@ from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-
+from joblib import load
 use_cuda = 'cuda' if torch.cuda.is_available() else 'cpu'
 device = torch.device(use_cuda)
 torch.set_num_threads(1)
@@ -327,6 +327,27 @@ if __name__ == '__main__':
 
 _model = None
 _model_type = None
+# def init_model(model_type, model_path):
+#     torch.manual_seed(1)
+#     random.seed(1)
+#     np.random.seed(1)
+#
+#     model_type, model_path = model_type.decode('ascii'), model_path.decode('ascii')
+#     model_path = os.path.expandvars(os.path.expanduser(model_path))
+#     global _model_type, _model
+#     assert(model_type in ('linear', 'feedforward', 'rnn'))
+#     assert(os.path.exists(model_path))
+#     _model_type = model_type
+#     if _model_type == 'linear':
+#         _model = PolicyLinear.load(model_path)
+#     elif _model_type == 'feedforward':
+#         _model = PolicyFeedforward.load(model_path)
+#         _model.eval()
+#     elif _model_type == 'rnn':
+#         _model = PolicyRNN.load(model_path)
+#         _model.eval()
+#     else:
+#         assert(False)
 def init_model(model_type, model_path):
     torch.manual_seed(1)
     random.seed(1)
@@ -335,7 +356,7 @@ def init_model(model_type, model_path):
     model_type, model_path = model_type.decode('ascii'), model_path.decode('ascii')
     model_path = os.path.expandvars(os.path.expanduser(model_path))
     global _model_type, _model
-    assert(model_type in ('linear', 'feedforward', 'rnn'))
+    assert(model_type in ('linear', 'feedforward', 'rnn', 'ridge'))
     assert(os.path.exists(model_path))
     _model_type = model_type
     if _model_type == 'linear':
@@ -346,13 +367,16 @@ def init_model(model_type, model_path):
     elif _model_type == 'rnn':
         _model = PolicyRNN.load(model_path)
         _model.eval()
+    elif _model_type == 'ridge':
+        _model = load(model_path)
     else:
         assert(False)
+
 
 def predict(x, hidden):
     assert(_model is not None)
     assert(_model_type is not None)
-    assert(_model_type in ('linear', 'feedforward', 'rnn'))
+    assert(_model_type in ('linear', 'feedforward', 'rnn', 'ridge'))
 
     if _model_type == 'linear':
         res = _model.forward(x)
@@ -371,6 +395,11 @@ def predict(x, hidden):
         res = res.view(x.size(0)).tolist()
         hidden_new = hidden_new.view(hidden.size(1), hidden.size(2)).tolist()
         return res, hidden_new
+    elif _model_type == 'ridge':
+        if x[:,7] > 7.5:
+            return 0.0
+        else:
+            return _model.predict(x[:, (0,2,6,8,10)])
 
 def sample(x):
     prob = F.softmax(torch.FloatTensor(x), dim=0).tolist()
