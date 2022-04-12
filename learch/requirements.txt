@@ -1,7 +1,7 @@
 numpy
-torch==1.10.2
+torch==1.4.0
 tqdm
-scikit-learn==1.0.1
+scikit-learn==0.23.2
 pandas
 wllvm
 termcolor
