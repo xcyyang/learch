@@ -322,9 +322,6 @@ def main():
         model = PolicyRNN(features[0].shape[1], args.hidden_dim).to(device)
         model.do_train(features, lengths, scores, args)
 
-if __name__ == '__main__':
-    main()
-
 _model = None
 _model_type = None
 # def init_model(model_type, model_path):
@@ -397,9 +394,9 @@ def predict(x, hidden):
         return res, hidden_new
     elif _model_type == 'ridge':
         if x[:,7] > 7.5:
-            return 0.0
+            return [0.0], None
         else:
-            return _model.predict(x[:, (0,2,6,8,10)])
+            return _model.predict(x[:, (0,2,6,8,10)]).tolist(), None
 
 def sample(x):
     prob = F.softmax(torch.FloatTensor(x), dim=0).tolist()
@@ -407,3 +404,20 @@ def sample(x):
     prob /= prob.sum()
     res = np.random.choice(list(range(len(x))), p=prob).item()
     return res
+
+if __name__ == '__main__':
+    main()
+    # init_model('feedforward', r'D:\Programming\learch\learch\train\trained\ff410.pt')
+    # features_tmp, features = np.load(args.features), []
+    # lengths_tmp, lengths = np.load(args.lengths), []
+    # scores = []
+    #
+    # x, y = [], []
+    # for i in range(features_tmp.shape[0]):
+    #     for j in range(lengths_tmp[i]):
+    #         x.append(features_tmp[i][j][:-1])
+    #         y.append(features_tmp[i][j][-1])
+    # tmp = list(zip(x, y))
+    # random.shuffle(tmp)
+    # x, y = zip(*tmp)
+    # predict(x,[])
