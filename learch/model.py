@@ -397,7 +397,7 @@ def predict(x, hidden):
             if rows[7] > 7.5:
                 return 0
             else:
-                return _model.predict(rows[[0, 2, 6, 8, 10]])[0]
+                return _model.predict(rows[[0, 2, 6, 8, 10]].reshape(1,-1))[0]
         return np.apply_along_axis(reduce_rows, 1, x).tolist(), None
         #
         # if x[:,7] > 7.5:

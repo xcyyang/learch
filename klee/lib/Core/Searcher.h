@@ -366,7 +366,8 @@ namespace klee {
       enum ModelType {
         Linear,
         Feedforward,
-        RNN
+        RNN,
+	Ridge
       };
 
     private:

@@ -472,7 +472,10 @@ MLSearcher::MLSearcher(Executor &_executor, std::string model_type, std::string 
     type = Feedforward;
   } else if (model_type == "rnn") {
     type = RNN;
+  } else if (model_type == "ridge"){
+    type = Ridge;
   }
+  std::cout << "Init Model" << std::endl;
   PyObject* pArgs = PyTuple_New(2);
   PyTuple_SetItem(pArgs, 0, PyBytes_FromString(model_type.c_str()));
   PyTuple_SetItem(pArgs, 1, PyBytes_FromString(model_path.c_str()));
@@ -484,6 +487,7 @@ MLSearcher::MLSearcher(Executor &_executor, std::string model_type, std::string 
   Py_DECREF(pArgs);
   Py_DECREF(pInitFunc);
   PyGILState_Release(gstate);
+  std::cout << "Init Model Finished" << std::endl;
 }
 
 MLSearcher::~MLSearcher() {
@@ -519,8 +523,14 @@ ExecutionState &MLSearcher::selectState() {
     PyObject *pName = PyUnicode_FromString("model");
     PyObject *pModule = PyImport_Import(pName);
     PyObject *pCallFunc = PyObject_GetAttrString(pModule, "predict");
+    PyErr_Print();
     PyObject* res = PyObject_CallObject(pCallFunc, pArgs);
+    if(res==NULL){
+    	std::cout << "NULL" << std::endl;
+    }
+    PyErr_Print();
     PyObject* rewards = PyTuple_GetItem(res, 0);
+    PyErr_Print();
     PyObject* new_hiddens = PyTuple_GetItem(res, 1);
 
     int i=0;
@@ -555,7 +565,7 @@ ExecutionState &MLSearcher::selectState() {
     double current_max = -100000000.0;
     bool current_set = false;
     for (auto state : states) {
-      // std::cout << state->predicted_reward << " ";
+      //std::cout << "reward:" << state->predicted_reward << " " << std::endl;
       if(!current_set || current_max < state->predicted_reward) {
         selection = state;
         current_max = state->predicted_reward;

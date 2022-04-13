@@ -11,7 +11,7 @@ do
                items=(${line//##/ })
                strategy=${items[0]}
                model=${items[1]}
-               if [[ "${strategy}" == "feedforward" ]]; then
+	       if [[ "${strategy}" == "feedforward" ]] || [[ "${strategy}" == "ridge" ]]; then
                        echo ${strategy}
                        echo ${model}
                        ./eval_gen_tests_coreutils.sh ${prog} ${OUTPUT} yes ${MAX_TIME} "${strategy} ${SOURCE_DIR}/${model}"
