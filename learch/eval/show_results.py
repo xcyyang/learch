@@ -65,8 +65,11 @@ def main():
         for j in range(len(searchers)):
             if cov_nums[i][j] == best_cov:
                 cov_table[len(progs)+2][j+1] += 1
+    print(len(cov_table))
+    print(len(searchers))
+    print(len(cov_table[0]))
     for j in range(len(searchers)):
-        cov_table[len(progs)+2][i+1] = str(cov_table[len(progs)+2][i+1])
+        cov_table[len(progs)+2][j+1] = str(cov_table[len(progs)+2][j+1])
 
     print(tabulate(cov_table, headers=['']+searchers, tablefmt='orgtbl'))
 
