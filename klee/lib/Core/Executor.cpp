@@ -490,7 +490,7 @@ Executor::Executor(LLVMContext &ctx, const InterpreterOptions &opts,
         setHaltExecution(true);
       })));
 
-  const time::Span logTime{"10s"};
+  const time::Span logTime{"600s"};
   if(logTime) timers.add(std::move(std::make_unique<Timer>(logTime, [&]{
         klee_message("10-minute interval log to record latest ktest id");
         int numTotalTests = interpreterHandler->getNumTestCases();
