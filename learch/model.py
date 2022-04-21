@@ -323,7 +323,9 @@ def main():
         model.do_train(features, lengths, scores, args)
 
 _model = None
+_model_second = None
 _model_type = None
+_dict = {}
 # def init_model(model_type, model_path):
 #     torch.manual_seed(1)
 #     random.seed(1)
@@ -349,10 +351,14 @@ def init_model(model_type, model_path):
     torch.manual_seed(1)
     random.seed(1)
     np.random.seed(1)
+    
 
     model_type, model_path = model_type.decode('ascii'), model_path.decode('ascii')
+    
+    model_second_path = model_path[:model_path.find('.')]+'2'+model_path[model_path.find('.'):]
+    model_second_path = os.path.expandvars(os.path.expanduser(model_second_path))
     model_path = os.path.expandvars(os.path.expanduser(model_path))
-    global _model_type, _model
+    global _model_type, _model, _model_second,_dict
     assert(model_type in ('linear', 'feedforward', 'rnn', 'ridge'))
     assert(os.path.exists(model_path))
     _model_type = model_type
@@ -365,7 +371,16 @@ def init_model(model_type, model_path):
         _model = PolicyRNN.load(model_path)
         _model.eval()
     elif _model_type == 'ridge':
+        print(model_path)
+        print(model_second_path)
         _model = load(model_path)
+        # _model_second = load(model_second_path)
+        
+        #features = np.load("/mnt/c/all_features-0.npy")
+        #features = features.reshape(-1,48)
+        #pos_features = features[features[:,-1] != 0]
+        #for rows in pos_features:
+        #    _dict[tuple(rows[:-1])] = rows[-1]
     else:
         assert(False)
 
@@ -394,11 +409,59 @@ def predict(x, hidden):
         return res, hidden_new
     elif _model_type == 'ridge':
         def reduce_rows(rows):
-            if rows[7] > 7.5:
-                return 0
+            if rows[4] <= 7.5:
+                return _model.predict(rows[[0,2,6,8,10]].reshape(1,-1))[0]
             else:
-                return _model.predict(rows[[0, 2, 6, 8, 10]].reshape(1,-1))[0]
-        return np.apply_along_axis(reduce_rows, 1, x).tolist(), None
+                if rows[10] <= 122.5:
+                    if rows[12] <= 1.5:
+                        return 0.67
+                    else:
+                        return 0.38
+                else:
+                    if rows[11] <= 18.5:
+                        return 0.22
+                    else:
+                        return 0.07
+    
+        def softmax(x):
+            f_x = np.exp(x) / np.sum(np.exp(x))
+            return f_x
+        
+        if x[0][4] <= 7.5:
+            return np.apply_along_axis(reduce_rows,1,x).tolist(), None
+        score = softmax(np.apply_along_axis(reduce_rows, 1, x))
+        print('score: ', score)
+        res_list = [0 for i in range(score.shape[0])]
+        chosen_index = np.random.choice(score.shape[0],1, replace=False, p=score.tolist())
+        print('chosen_index: ', chosen_index)
+        res_list[chosen_index[0]] = 1
+        return res_list, None
+        # def reduce_rows(rows):
+        #     if rows[4] > 7.5:
+        #         return 1.5 * _model_second.predict(rows[[0, 2, 4, 6, 8, 10,11,12,13,14]].reshape(1,-1))[0]
+        #     else:
+        #         return _model.predict(rows[[0, 2, 4, 6, 8, 10,11,12,13,14]].reshape(1,-1))[0]
+        # res = np.apply_along_axis(reduce_rows,1,x)
+        # res = res + np.random.normal(0, 0.1, res.shape)
+        
+        #assert(_dict is not None)
+        #def reduce_rows(rows,_dict):
+        #    tmp = _dict.get(tuple(rows)):
+        #    if tmp:
+        #        return tmp
+        #    else:
+        #        return 0
+        #res = np.apply_along_axis(reduce_rows, 1, x, _dict)
+        
+        #res = []
+        #for row in x:
+        #    tmp = _dict.get(tuple(row))
+        #    if tmp:
+        #        res.append(tmp)
+        #    else:
+        #        res.append(0)
+         
+        # return res.tolist(), None
         #
         # if x[:,7] > 7.5:
         #     return [0.0], None

@@ -481,12 +481,17 @@ MLSearcher::MLSearcher(Executor &_executor, std::string model_type, std::string 
   PyTuple_SetItem(pArgs, 1, PyBytes_FromString(model_path.c_str()));
   PyObject* pInitFunc = PyObject_GetAttrString(pModule, "init_model");
   PyObject_CallObject(pInitFunc, pArgs);
-
+  PyErr_Print();
   Py_DECREF(pModule);
+  PyErr_Print();
   Py_DECREF(pName);
+  PyErr_Print();
   Py_DECREF(pArgs);
+  PyErr_Print();
   Py_DECREF(pInitFunc);
+  PyErr_Print();
   PyGILState_Release(gstate);
+  PyErr_Print();
   std::cout << "Init Model Finished" << std::endl;
 }
 
@@ -538,7 +543,16 @@ ExecutionState &MLSearcher::selectState() {
       if(!state->predicted) {
         state->predicted = true;
         state->predicted_reward = PyFloat_AsDouble(PyList_GetItem(rewards, i));
-        if (type == RNN) {
+
+	// std::cout << "features: ";
+	// for (uint i=2; i<state->feature.size(); i++) {
+  //       std::cout << state->feature[i]<< " ; ";
+  //       }
+  //       std::cout << std::endl;
+	// std::cout << "reward:" << state->predicted_reward << " " << std::endl;
+	// std::cout << "----------------------------------------" << std::endl ;
+
+	if (type == RNN) {
           for (uint j=0; j<state->hidden_state.size(); j++) {
             state->hidden_state[j] = PyFloat_AsDouble(PyList_GetItem(PyList_GetItem(new_hiddens, i), j));
           }
@@ -572,7 +586,17 @@ ExecutionState &MLSearcher::selectState() {
         current_set = true;
       }
     }
-    // std::cout << std::endl << current_max << std::endl << std::endl;
+    
+    // std::cout << "Current max reward:" << current_max << std::endl;
+    // std::cout << "Features of current selected state: ";
+    //     for(uint i=2; i<selection->feature.size(); i++) {
+    //     std::cout << selection->feature[i] << " ; ";
+    //     } 
+    // std::cout << std::endl;
+    // std::cout << "////////////////////////////////" << std::endl;
+
+    
+    //std::cout << std::endl << current_max << std::endl << std::endl;
   }
 
   selection->predicted_reward = 0.0;

@@ -490,6 +490,16 @@ Executor::Executor(LLVMContext &ctx, const InterpreterOptions &opts,
         setHaltExecution(true);
       })));
 
+  const time::Span logTime{"10s"};
+  if(logTime) timers.add(std::move(std::make_unique<Timer>(logTime, [&]{
+        klee_message("loggggggggggggggggggggggggggggggggggg");
+        int numTotalTests = interpreterHandler->getNumTestCases();
+        const std::string test =  interpreterHandler->getTestFilename("ktest_log", numTotalTests);
+        klee_message(test.c_str());
+        const std::string file = interpreterHandler->getOutputFilename("test.txt");
+        klee_message(file.c_str());
+      })));
+
   coreSolverTimeout = time::Span{MaxCoreSolverTime};
   if (coreSolverTimeout) UseForkedCoreSolver = true;
   Solver *coreSolver = klee::createCoreSolver(CoreSolverToUse);

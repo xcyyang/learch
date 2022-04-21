@@ -1,0 +1,3 @@
+ridge train/trained/ridge_f.joblib
+feedforward train/trained/feedforward_3.pt
+random-path

@@ -47,6 +47,10 @@ public:
                                const char *suffix) = 0;
 
   virtual void processFeatures(const std::vector<std::pair<std::string, double>> &features) = 0;
+
+  virtual unsigned getNumTestCases();
+  virtual unsigned getNumPathsExplored();
+  virtual std::string getTestFilename(const std::string &suffix, unsigned id);
 };
 
 class Interpreter {
