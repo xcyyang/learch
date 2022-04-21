@@ -492,12 +492,13 @@ Executor::Executor(LLVMContext &ctx, const InterpreterOptions &opts,
 
   const time::Span logTime{"10s"};
   if(logTime) timers.add(std::move(std::make_unique<Timer>(logTime, [&]{
-        klee_message("loggggggggggggggggggggggggggggggggggg");
+        klee_message("10-minute interval log to record latest ktest id");
         int numTotalTests = interpreterHandler->getNumTestCases();
-        const std::string test =  interpreterHandler->getTestFilename("ktest_log", numTotalTests);
-        klee_message(test.c_str());
-        const std::string file = interpreterHandler->getOutputFilename("test.txt");
-        klee_message(file.c_str());
+        const std::string logFilename =  interpreterHandler->getTestFilename("log_10mins", numTotalTests);
+        klee_message(logFilename.c_str());
+        const std::string filePath = interpreterHandler->getOutputFilename(logFilename);
+        FILE* file = fopen(filePath.c_str(), "w");
+        klee_message(filePath.c_str());
       })));
 
   coreSolverTimeout = time::Span{MaxCoreSolverTime};
