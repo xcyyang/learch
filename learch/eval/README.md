@@ -1,12 +1,16 @@
 ## Test Script
-1. Usage: `./test_coreutils.sh [program_list.txt] [output directory] [strategy_list.txt] [max time]`
+1. Recompile KLEE
+  - `cd ~/learch/klee`
+  - `./build.sh`
+2. `cd ~/learch/learch/eval` 
+2. Usage: `./test_coreutils.sh [program_list.txt] [output directory] [strategy_list.txt] [max time]`
 2. Example:
 - program_list.txt
   - b2sum
   - base64
 - strategy_list.txt
-  - random_path
-  - feedforward train/trained/feedforward_0.pt
+  - random-path
+  - feedforward train/trained/feedforward_3.pt
   - nurs:depth
 - output directory
   - ~/test
