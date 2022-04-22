@@ -13,7 +13,7 @@
 - max time (second)
   - 60
   - 1800
-- `./test_coreutils.sh ${SOURCE_DIR}/benchmarks/coreutils_test.txt ~/test strategy_list.txt 60`
+- `./test_coreutils.sh ${SOURCE_DIR}/benchmarks/coreutils_test.txt ~/test test_strategies.txt 1800`
 3. Show Result
 - python3 show_results.py --prog_list ${SOURCE_DIR}/benchmarks/coreutils_test.txt --cov_dir ~/test
        

@@ -22,6 +22,8 @@ elif [[ "${searcher_name}" == "rnn" ]]; then
     searcher_options="--feature-extract --search=ml --model-type=rnn --model-path=${searcher_path}"
 elif [[ "${searcher_name}" == "ridge" ]]; then
     searcher_options="--feature-extract --search=ml --model-type=ridge --model-path=${searcher_path}"
+elif [[ "${searcher_name}" == "sgs" ]]; then
+    searcher_options="--search=sgs:1 --search=sgs:2 --search=sgs:4"    
 else
     searcher_options="--search=${searcher_name}"
 fi
