@@ -20,7 +20,7 @@ do
 done
 
 #${SOURCE_DIR}/replay.sh ${GCOV_PATH} ${TESTS_DIR}/*.ktest
-COUNTER=0
+lastUpdate="$(stat -c %Y ${TESTS_DIR}/test000001.cov)"
 FILES=$(ls $TESTS_DIR | sort -g)
 for FILE in $FILES; 
 do 
@@ -30,7 +30,8 @@ do
     fi
     if [[ $FILE == *.log_10mins ]]
     then
-        let COUNTER=COUNTER+10
+        now="$(stat -c %Y ${TESTS_DIR}/${FILE})"
+        let COUNTER="${now}-${lastUpdate}"
         find ${GCOV_DIR} -type f -name *.gcda | while read f
         do
             mkdir -p ${TESTS_DIR}/${COUNTER}/$(dirname ${f})
