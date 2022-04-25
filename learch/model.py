@@ -411,14 +411,14 @@ def predict(x, hidden):
     elif _model_type == 'ridge':
         def reduce_rows(rows):
             if rows[4] <= 6.5:
-                return _model.predict(rows[[0,2,6,8,10]].reshape(1,-1))[0]
+                return _model.predict(rows[[0,2,6,8,10,11,12]].reshape(1,-1))[0]
             else:
                 # constrains = np.array(x[-32:]).sum()
                 features = rows[[0,2,6,8,11,12,14]]
-                return _model_second.predict(features.reshape(1,-1))[0] * 1.5 + np.random.normal(0,0.1,1)
+                return _model_second.predict(features.reshape(1,-1))[0]*1.5
     
         res = np.apply_along_axis(reduce_rows, 1, x)
-        # res += np.random.normal(0,0.05,res.shape)
+        res += np.random.normal(0,0.05,res.shape)
         return res.tolist(), None
 
 def sample(x):
