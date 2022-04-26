@@ -409,6 +409,7 @@ def predict(x, hidden):
         hidden_new = hidden_new.view(hidden.size(1), hidden.size(2)).tolist()
         return res, hidden_new
     elif _model_type == 'ridge':
+        rng = np.random.default_rng()
         def reduce_rows(rows):
             if rows[4] <= 6.5:
                 return _model.predict(rows[[0,2,6,8,10,11,12]].reshape(1,-1))[0]
@@ -418,7 +419,7 @@ def predict(x, hidden):
                 return _model_second.predict(features.reshape(1,-1))[0]*1.5
     
         res = np.apply_along_axis(reduce_rows, 1, x)
-        res += np.random.normal(0,0.05,res.shape)
+        res += rng.normal(0,0.05,res.shape)
         return res.tolist(), None
 
 def sample(x):
