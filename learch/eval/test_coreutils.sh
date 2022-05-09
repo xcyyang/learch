@@ -19,6 +19,6 @@ do
                         echo ${strategy}
                         ./eval_gen_tests_coreutils.sh ${prog} ${OUTPUT} yes ${MAX_TIME} "${strategy}"
                 fi
-                ./replay_tests.sh ~/test/${strategy}/${prog} ${SOURCE_DIR}/benchmarks/coreutils-8.31/obj-gcov-${prog}/src/${prog} ${SOURCE_DIR}/benchmarks/coreutils-8.31/obj-gcov-${prog}
+                ./replay_tests.sh ${OUTPUT}/${strategy}/${prog} ${SOURCE_DIR}/benchmarks/coreutils-8.31/obj-gcov-${prog}/src/${prog} ${SOURCE_DIR}/benchmarks/coreutils-8.31/obj-gcov-${prog}
        done
 done
